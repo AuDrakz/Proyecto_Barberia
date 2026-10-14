@@ -7,7 +7,7 @@ y el barbero confirma o rechaza cada solicitud.
 
 ## Requisitos
 
-- Java 21 (o la versión que elegiste al generar el proyecto)
+- Java 21 
 - Docker y Docker Compose
 
 ## Cómo ejecutarlo en local

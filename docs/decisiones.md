@@ -17,3 +17,4 @@ Registro corto de decisiones importantes: qué se eligió, por qué y qué se de
 | `Clock` inyectado en vez de `LocalDate.now()` directo | Las pruebas pueden fijar "hoy" en cualquier fecha | Depender del reloj real: pruebas que fallan según el día |
 | Paquetes por funcionalidad (`horario`, `reserva`) | Lo que cambia junto vive junto | Paquetes por capa (`controller`, `service`...): el código de una funcionalidad queda disperso |
 | Disponibilidad y bloqueos se cargan a mano por ahora | Crearlos requiere login: se hace en la etapa 4 junto con la seguridad | Dejar endpoints de escritura sin autenticación |
+git checkout -b docs/cierre-etapa-2

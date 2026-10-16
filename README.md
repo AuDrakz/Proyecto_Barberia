@@ -30,8 +30,8 @@ Ver [docs/decisiones.md](docs/decisiones.md).
 ## Roadmap
 
 - [x] Etapa 1: base del proyecto y esquema de la base de datos
-- [ ] Etapa 2: disponibilidad, bloqueos y horarios libres
-- [ ] Etapa 3: solicitud de hora y cancelación con enlace
+- [x] Etapa 2: disponibilidad, bloqueos y horarios libres
+- [x] Etapa 3: solicitud de hora y cancelación con enlace
 - [ ] Etapa 4: panel del administrador (login, confirmar y rechazar)
 - [ ] Etapa 5: frontend para celular
 - [ ] Etapa 6: CI, despliegue y documentación final

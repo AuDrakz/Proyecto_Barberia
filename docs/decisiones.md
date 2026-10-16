@@ -18,3 +18,7 @@ Registro corto de decisiones importantes: qué se eligió, por qué y qué se de
 | Paquetes por funcionalidad (`horario`, `reserva`) | Lo que cambia junto vive junto | Paquetes por capa (`controller`, `service`...): el código de una funcionalidad queda disperso |
 | Disponibilidad y bloqueos se cargan a mano por ahora | Crearlos requiere login: se hace en la etapa 4 junto con la seguridad | Dejar endpoints de escritura sin autenticación |
 git checkout -b docs/cierre-etapa-2
+| El servidor recalcula los horarios libres y exige que la hora pedida esté en la lista | Nunca se confía en lo que manda el navegador | Confiar en que la pantalla solo ofrece horas válidas |
+| Cancelar una solicitud pendiente la deja `CANCELADA` con `cancelada_por = CLIENTE` | No se agrega un estado más | Un estado nuevo (por ejemplo `RETIRADA`) |
+| Máximo de 2 solicitudes pendientes por teléfono, normalizado a formato E.164 | Defensa barata contra horas fantasma; el formato único evita saltarse el límite | Verificar el teléfono con código |
+| Acceso a una reserva solo con token UUID, sin listados, y la API no devuelve el teléfono | Evita IDOR y expone lo mínimo | IDs numéricos en la URL |

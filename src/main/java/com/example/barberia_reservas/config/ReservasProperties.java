@@ -6,16 +6,17 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * Reglas de negocio configurables (se leen de "app.reservas.*" en application.properties).
- * Así, cambiar una regla (por ejemplo, cuántos días de anticipación) NO requiere tocar el código.
+ * Cambiar una regla NO requiere tocar el código.
  */
 @ConfigurationProperties(prefix = "app.reservas")
 public record ReservasProperties(
         String zonaHoraria,
         int duracionMinutos,
         int diasMinimosAnticipacion,
-        int diasMaximosAnticipacion) {
+        int diasMaximosAnticipacion,
+        int maxSolicitudesPendientesPorTelefono) {
 
-    // Validamos al arrancar: si la configuración está mal, la app NO parte (falla rápido y con mensaje claro).
+    // Se valida al arrancar: si la configuración está mal, la app NO parte (falla rápido y con mensaje claro).
     public ReservasProperties {
         if (zonaHoraria == null || zonaHoraria.isBlank()) {
             throw new IllegalArgumentException("Falta app.reservas.zona-horaria");
@@ -26,6 +27,9 @@ public record ReservasProperties(
         }
         if (diasMinimosAnticipacion < 0 || diasMaximosAnticipacion < diasMinimosAnticipacion) {
             throw new IllegalArgumentException("Revisa app.reservas.dias-minimos/maximos-anticipacion");
+        }
+        if (maxSolicitudesPendientesPorTelefono < 1) {
+            throw new IllegalArgumentException("app.reservas.max-solicitudes-pendientes-por-telefono debe ser al menos 1");
         }
     }
 }

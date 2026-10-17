@@ -27,4 +27,13 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
     boolean existsByTelefonoAndInicioAndEstado(String telefono, Instant inicio, EstadoReserva estado);
 
     Optional<Reserva> findByTokenCancelacion(UUID tokenCancelacion);
+
+    // --- Panel del administrador ---
+
+    /** Reservas de un estado que aún no han pasado, de la más próxima a la más lejana. */
+    List<Reserva> findByEstadoAndInicioGreaterThanEqualOrderByInicioAsc(EstadoReserva estado, Instant desde);
+
+    boolean existsByInicioAndEstado(Instant inicio, EstadoReserva estado);
+
+    List<Reserva> findByInicioAndEstado(Instant inicio, EstadoReserva estado);
 }

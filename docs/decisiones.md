@@ -22,3 +22,18 @@ git checkout -b docs/cierre-etapa-2
 | Cancelar una solicitud pendiente la deja `CANCELADA` con `cancelada_por = CLIENTE` | No se agrega un estado más | Un estado nuevo (por ejemplo `RETIRADA`) |
 | Máximo de 2 solicitudes pendientes por teléfono, normalizado a formato E.164 | Defensa barata contra horas fantasma; el formato único evita saltarse el límite | Verificar el teléfono con código |
 | Acceso a una reserva solo con token UUID, sin listados, y la API no devuelve el teléfono | Evita IDOR y expone lo mínimo | IDs numéricos en la URL |
+| Login con sesión y cookie (no JWT) | Más simple y seguro por defecto para un solo administrador; la cookie no es legible por JavaScript | JWT: conviene si el frontend vive en otro dominio o si hay una app móvil |
+| Cuenta del administrador creada al arrancar desde variables de entorno | No existe un endpoint de registro que atacar, y la contraseña nunca queda en el código ni en GitHub | Endpoint de registro |
+| Contraseñas con BCrypt, mínimo 12 caracteres | Se guarda solo el hash; BCrypt es lento a propósito | SHA-256 simple o cifrado reversible |
+| Todo denegado por defecto; solo se abre lo permitido explícitamente | Un endpoint olvidado no queda expuesto | Permitir todo y proteger de a uno |
+| CSRF activado con `csrf.spa()`, salvo en los endpoints públicos del cliente | Las acciones del administrador usan cookie, y la cookie viaja sola | Desactivar CSRF |
+| Confirmar una solicitud rechaza las demás del mismo horario en la misma transacción | Todo o nada; el índice único de la base de datos es la red de seguridad final | Rechazarlas con un proceso aparte |
+## API
+
+| Endpoint | Acceso | Qué hace |
+|---|---|---|
+| `GET /api/horarios?fecha=AAAA-MM-DD` | Público | Horarios libres de un día |
+| `POST /api/reservas` | Público | Solicitar una hora |
+| `GET /api/reservas/{token}` | Público (con el token) | Ver una solicitud |
+| `POST /api/reservas/{token}/cancelar` | Público (con el token) | Cancelar |
+| `/api/admin/**` | Administrador | Login, panel de reservas, disponibilidad y bloqueos |

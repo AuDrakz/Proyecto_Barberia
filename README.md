@@ -13,15 +13,15 @@ y el barbero confirma o rechaza cada solicitud.
 ## Cómo ejecutarlo en local
 
 ```bash
-# 1. Levantar la base de datos
-docker compose up -d
+   ## Cómo ejecutarlo en local
 
-# 2. Ejecutar la aplicación (Linux/macOS)
-./mvnw spring-boot:run
-# En Windows: mvnw.cmd spring-boot:run
+   1. Levantar la base de datos: `docker compose up -d`
+   2. Definir las credenciales del administrador (se crea al primer arranque, solo si no existe ninguno):
+```powershell
+      $env:ADMIN_EMAIL = "admin@ejemplo.com"
+      $env:ADMIN_PASSWORD = Read-Host "Contraseña (mínimo 12 caracteres)"
 ```
-
-Al iniciar, Flyway crea las tablas automáticamente.
+   3. Arrancar la aplicación: `./mvnw spring-boot:run`
 
 ## Decisiones de diseño
 
@@ -32,7 +32,7 @@ Ver [docs/decisiones.md](docs/decisiones.md).
 - [x] Etapa 1: base del proyecto y esquema de la base de datos
 - [x] Etapa 2: disponibilidad, bloqueos y horarios libres
 - [x] Etapa 3: solicitud de hora y cancelación con enlace
-- [ ] Etapa 4: panel del administrador (login, confirmar y rechazar)
+- [x] Etapa 4: panel del administrador (login, confirmar y rechazar)
 - [ ] Etapa 5: frontend para celular
 - [ ] Etapa 6: CI, despliegue y documentación final
 - [ ] v2: reagendar

@@ -2,6 +2,7 @@ package com.example.barberia_reservas.horario;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,8 +36,33 @@ public class Bloqueo {
         // Constructor que exige JPA.
     }
 
+    /** horaInicio y horaFin van las dos o ninguna (ninguna = día completo); la base de datos también lo exige. */
+    public static Bloqueo crear(LocalDate fecha, LocalTime horaInicio, LocalTime horaFin, String motivo) {
+        Objects.requireNonNull(fecha);
+        if ((horaInicio == null) != (horaFin == null)) {
+            throw new IllegalArgumentException("horaInicio y horaFin deben venir juntas o ninguna");
+        }
+        if (horaInicio != null && !horaFin.isAfter(horaInicio)) {
+            throw new IllegalArgumentException("horaFin debe ser posterior a horaInicio");
+        }
+        Bloqueo bloqueo = new Bloqueo();
+        bloqueo.fecha = fecha;
+        bloqueo.horaInicio = horaInicio;
+        bloqueo.horaFin = horaFin;
+        bloqueo.motivo = motivo;
+        return bloqueo;
+    }
+
     public boolean esDiaCompleto() {
         return horaInicio == null && horaFin == null;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public LocalDate getFecha() {
+        return fecha;
     }
 
     public LocalTime getHoraInicio() {
@@ -45,5 +71,9 @@ public class Bloqueo {
 
     public LocalTime getHoraFin() {
         return horaFin;
+    }
+
+    public String getMotivo() {
+        return motivo;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.barberia_reservas.horario;
 
 import java.time.LocalTime;
+import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,6 +30,30 @@ public class Disponibilidad {
 
     protected Disponibilidad() {
         // Constructor que exige JPA.
+    }
+
+    public static Disponibilidad crear(short diaSemana, LocalTime horaInicio, LocalTime horaFin) {
+        if (diaSemana < 1 || diaSemana > 7) {
+            throw new IllegalArgumentException("diaSemana debe estar entre 1 y 7");
+        }
+        Objects.requireNonNull(horaInicio);
+        Objects.requireNonNull(horaFin);
+        if (!horaFin.isAfter(horaInicio)) {
+            throw new IllegalArgumentException("horaFin debe ser posterior a horaInicio");
+        }
+        Disponibilidad disponibilidad = new Disponibilidad();
+        disponibilidad.diaSemana = diaSemana;
+        disponibilidad.horaInicio = horaInicio;
+        disponibilidad.horaFin = horaFin;
+        return disponibilidad;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public short getDiaSemana() {
+        return diaSemana;
     }
 
     public LocalTime getHoraInicio() {

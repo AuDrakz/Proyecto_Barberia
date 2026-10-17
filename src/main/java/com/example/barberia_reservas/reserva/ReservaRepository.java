@@ -36,4 +36,7 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
     boolean existsByInicioAndEstado(Instant inicio, EstadoReserva estado);
 
     List<Reserva> findByInicioAndEstado(Instant inicio, EstadoReserva estado);
+
+    /** Reservas de un estado dentro de [desde, hasta): sirve para ver qué choca con un bloqueo. */
+    List<Reserva> findByEstadoAndInicioGreaterThanEqualAndInicioLessThan(EstadoReserva estado, Instant desde, Instant hasta);
 }

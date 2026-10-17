@@ -8,4 +8,6 @@ public interface DisponibilidadRepository extends JpaRepository<Disponibilidad, 
 
     /** Spring Data genera la consulta a partir del nombre del método: WHERE dia_semana = ? */
     List<Disponibilidad> findByDiaSemana(short diaSemana);
+
+    List<Disponibilidad> findAllByOrderByDiaSemanaAscHoraInicioAsc();
 }

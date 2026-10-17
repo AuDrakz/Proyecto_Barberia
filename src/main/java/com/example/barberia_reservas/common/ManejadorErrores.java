@@ -34,10 +34,10 @@ public class ManejadorErrores {
         return problema;
     }
 
-    @ExceptionHandler(ReservaNoEncontradaException.class)
-    public ProblemDetail noEncontrada(ReservaNoEncontradaException ex) {
+    @ExceptionHandler(NoEncontradoException.class)
+    public ProblemDetail noEncontrado(NoEncontradoException ex) {
         ProblemDetail problema = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
-        problema.setTitle("Reserva no encontrada");
+        problema.setTitle("No encontrado");
         return problema;
     }
 }

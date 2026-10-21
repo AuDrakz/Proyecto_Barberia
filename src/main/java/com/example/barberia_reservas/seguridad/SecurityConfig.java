@@ -20,16 +20,26 @@ import org.springframework.security.web.authentication.logout.HttpStatusReturnin
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Seguridad de la API:
- *  - Zona pública: horarios y solicitudes/cancelaciones del cliente (el token del enlace es su llave).
- *  - Zona de administración (/api/admin/**): exige sesión iniciada (cookie) y rol ADMIN.
+ * Seguridad de la aplicación:
+ *  - Páginas y archivos del frontend (HTML, CSS, JS): públicos, solo lectura. No contienen datos: los datos
+ *    llegan por la API, que es la que está protegida.
+ *  - API pública: horarios, datos del negocio y solicitudes/cancelaciones del cliente (el token del enlace es su llave).
+ *  - API de administración (/api/admin/**): exige sesión iniciada (cookie) y rol ADMIN.
  *  - Todo lo demás: DENEGADO por defecto (lo que no se permite explícitamente, no se puede usar).
  *
- * Es una API JSON, así que login, logout y errores responden con códigos HTTP (200, 401, 403), sin páginas HTML ni redirecciones.
+ * Es una API JSON, así que login, logout y errores responden con códigos HTTP (200, 401, 403), sin redirecciones.
  */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    /**
+     * Política de contenido (CSP): el navegador solo ejecuta scripts y carga estilos que vienen de ESTE sitio.
+     * Si alguien lograra inyectar un script en una página (XSS), el navegador lo bloquearía. Por eso el frontend
+     * no usa scripts ni estilos "en línea" ni librerías de terceros.
+     */
+    private static final String POLITICA_DE_CONTENIDO = "default-src 'self'; script-src 'self'; style-src 'self'; "
+            + "img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'";
 
     /** BCrypt es lento a propósito: si se filtra la base de datos, probar contraseñas por fuerza bruta resulta carísimo. */
     @Bean
@@ -57,11 +67,18 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/horarios").permitAll()
+                        // Frontend: solo lectura (GET) de las páginas y sus archivos
+                        .requestMatchers(HttpMethod.GET, "/", "/index.html", "/reserva.html",
+                                "/css/**", "/js/**", "/favicon.svg").permitAll()
+                        // API pública
+                        .requestMatchers(HttpMethod.GET, "/api/horarios", "/api/horarios/resumen", "/api/negocio").permitAll()
                         .requestMatchers("/api/reservas/**").permitAll()
                         .requestMatchers("/api/admin/sesion", "/api/admin/login").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().denyAll())
+
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp -> csp.policyDirectives(POLITICA_DE_CONTENIDO)))
 
                 // CSRF: un sitio malicioso no puede hacer que el navegador del administrador envíe acciones sin que
                 // lo sepa, porque exigimos un token que solo el nuestro puede leer. csrf.spa() lo deja listo para

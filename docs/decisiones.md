@@ -30,13 +30,7 @@ git checkout -b docs/cierre-etapa-2
 | Confirmar una solicitud rechaza las demás del mismo horario en la misma transacción | Todo o nada; el índice único de la base de datos es la red de seguridad final | Rechazarlas con un proceso aparte |
 ## API
 
-| Endpoint | Acceso | Qué hace |
-|---|---|---|
-| `GET /api/horarios?fecha=AAAA-MM-DD` | Público | Horarios libres de un día |
-| `POST /api/reservas` | Público | Solicitar una hora |
-| `GET /api/reservas/{token}` | Público (con el token) | Ver una solicitud |
-| `POST /api/reservas/{token}/cancelar` | Público (con el token) | Cancelar |
-| `/api/admin/**` | Administrador | Login, panel de reservas, disponibilidad y bloqueos |
+
 
 | Una disponibilidad semanal que se superpone con otra del mismo día se rechaza | Mantiene los datos limpios; dos tramos que solo se tocan sí son válidos | Aceptarlas y que la calculadora elimine los duplicados |
 | Un bloqueo no puede pisar una reserva confirmada: se rechaza e indica cuáles chocan | No quedan citas confirmadas en un horario bloqueado | Permitirlo y dejar citas "huérfanas" |

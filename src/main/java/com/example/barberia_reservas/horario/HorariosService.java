@@ -4,6 +4,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +28,8 @@ public class HorariosService {
     private final ReservaRepository reservaRepository;
     private final Clock clock;
     private final ZoneId zona;
+    private final int diasMinimos;
+    private final int diasMaximos;
     private final ReglaAnticipacion regla;
     private final CalculadoraHorarios calculadora;
 
@@ -40,7 +43,9 @@ public class HorariosService {
         this.reservaRepository = reservaRepository;
         this.clock = clock;
         this.zona = ZoneId.of(propiedades.zonaHoraria());
-        this.regla = new ReglaAnticipacion(propiedades.diasMinimosAnticipacion(), propiedades.diasMaximosAnticipacion());
+        this.diasMinimos = propiedades.diasMinimosAnticipacion();
+        this.diasMaximos = propiedades.diasMaximosAnticipacion();
+        this.regla = new ReglaAnticipacion(diasMinimos, diasMaximos);
         this.calculadora = new CalculadoraHorarios(zona, propiedades.duracionMinutos());
     }
 
@@ -76,5 +81,25 @@ public class HorariosService {
                 reservaRepository.buscarInicios(EstadoReserva.CONFIRMADA, desde, hasta));
 
         return calculadora.calcular(fecha, disponibles, bloqueados, ocupados);
+    }
+
+    /**
+     * Los días de la ventana de reservas que tienen al menos un horario libre. Lo usa la pantalla del cliente para
+     * mostrar solo días con opciones, en UNA llamada (en vez de que el navegador pregunte día por día).
+     * La ventana tiene como máximo unas decenas de días, así que repetir el cálculo diario es barato a esta escala.
+     */
+    @Transactional(readOnly = true)
+    public List<DiaConHorarios> resumenDias() {
+        LocalDate hoy = LocalDate.now(clock.withZone(zona));
+        LocalDate ultimo = hoy.plusDays(diasMaximos);
+
+        List<DiaConHorarios> dias = new ArrayList<>();
+        for (LocalDate fecha = hoy.plusDays(diasMinimos); !fecha.isAfter(ultimo); fecha = fecha.plusDays(1)) {
+            int libres = horariosLibres(fecha).size();
+            if (libres > 0) {
+                dias.add(new DiaConHorarios(fecha, libres));
+            }
+        }
+        return dias;
     }
 }

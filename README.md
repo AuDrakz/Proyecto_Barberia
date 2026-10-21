@@ -27,6 +27,16 @@ y el barbero confirma o rechaza cada solicitud.
 
 Ver [docs/decisiones.md](docs/decisiones.md).
 
+| Endpoint | Acceso | Qué hace |
+|---|---|---|
+| `GET /api/horarios?fecha=AAAA-MM-DD` | Público | Horarios libres de un día |
+| `POST /api/reservas` | Público | Solicitar una hora |
+| `GET /api/reservas/{token}` | Público (con el token) | Ver una solicitud |
+| `POST /api/reservas/{token}/cancelar` | Público (con el token) | Cancelar |
+| `/api/admin/**` | Administrador | Login, panel de reservas, disponibilidad y bloqueos |
+| `GET/POST /api/admin/disponibilidad`, `DELETE .../{id}` | Administrador | Tramos semanales |
+| `GET/POST /api/admin/bloqueos`, `DELETE .../{id}` | Administrador | Bloqueos puntuales |
+
 ## Roadmap
 
 - [x] Etapa 1: base del proyecto y esquema de la base de datos

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reservar hora</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/estilos.css">
+</head>
+<body>
+  <div class="contenedor">
+    <header>
+      <h1 id="nombre-negocio">Reservar hora</h1>
+      <p class="suave">Elige un día y una hora. El barbero confirmará tu solicitud.</p>
+    </header>
+
+    <main>
+      <div id="mensaje" class="aviso" role="status" aria-live="polite" hidden></div>
+
+      <section id="mis-solicitudes" class="tarjeta" hidden aria-labelledby="titulo-mis-solicitudes">
+        <h2 id="titulo-mis-solicitudes">Tus solicitudes en este dispositivo</h2>
+        <ul id="lista-solicitudes" class="lista"></ul>
+      </section>
+
+      <section id="paso-dia" class="tarjeta" aria-labelledby="titulo-dia">
+        <h2 id="titulo-dia">1. Elige un día</h2>
+        <div id="dias" class="dias" role="group" aria-labelledby="titulo-dia"></div>
+      </section>
+
+      <section id="paso-hora" class="tarjeta" hidden aria-labelledby="titulo-horas">
+        <h2 id="titulo-horas">2. Elige una hora</h2>
+        <div id="horas" class="horas" role="group" aria-labelledby="titulo-horas"></div>
+      </section>
+
+      <section id="paso-datos" class="tarjeta" hidden aria-labelledby="titulo-datos">
+        <h2 id="titulo-datos">3. Tus datos</h2>
+        <p id="eleccion" class="suave"></p>
+        <form id="formulario" novalidate>
+          <div class="campo">
+            <label for="nombreCliente">Nombre</label>
+            <input id="nombreCliente" name="nombreCliente" type="text" autocomplete="name" maxlength="100" required aria-describedby="error-nombreCliente">
+            <span id="error-nombreCliente" class="error-campo" role="alert"></span>
+          </div>
+          <div class="campo">
+            <label for="telefono">Celular</label>
+            <input id="telefono" name="telefono" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" required aria-describedby="ayuda-telefono error-telefono">
+            <span id="ayuda-telefono" class="ayuda">Por ejemplo: 9 1234 5678. Es el número al que te contactará el barbero.</span>
+            <span id="error-telefono" class="error-campo" role="alert"></span>
+          </div>
+          <div class="campo">
+            <label for="instagram">Instagram (opcional)</label>
+            <input id="instagram" name="instagram" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="31" aria-describedby="error-instagram">
+            <span id="error-instagram" class="error-campo" role="alert"></span>
+          </div>
+          <button id="enviar" type="submit" class="boton">Solicitar hora</button>
+        </form>
+      </section>
+
+      <section id="exito" class="tarjeta" hidden aria-live="polite"></section>
+    </main>
+  </div>
+  <script type="module" src="/js/reservar.js"></script>
+</body>
+</html>

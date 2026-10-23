@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- El enlace lleva el token en la dirección: no se envía a otros sitios al hacer clic en un enlace externo -->
+  <meta name="referrer" content="no-referrer">
+  <title>Mi solicitud</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/estilos.css">
+</head>
+<body>
+  <div class="contenedor">
+    <header>
+      <h1>Mi solicitud</h1>
+    </header>
+    <main>
+      <div id="mensaje" class="aviso" role="status" aria-live="polite" hidden></div>
+      <section id="contenido" class="tarjeta" aria-live="polite">
+        <p class="suave">Cargando…</p>
+      </section>
+    </main>
+  </div>
+  <script type="module" src="/js/reserva.js"></script>
+</body>
+</html>

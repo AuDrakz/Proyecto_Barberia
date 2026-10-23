@@ -29,15 +29,10 @@ git checkout -b docs/cierre-etapa-2
 | CSRF activado con `csrf.spa()`, salvo en los endpoints públicos del cliente | Las acciones del administrador usan cookie, y la cookie viaja sola | Desactivar CSRF |
 | Confirmar una solicitud rechaza las demás del mismo horario en la misma transacción | Todo o nada; el índice único de la base de datos es la red de seguridad final | Rechazarlas con un proceso aparte |
 ## API
-
-| Endpoint | Acceso | Qué hace |
-|---|---|---|
-| `GET /api/horarios?fecha=AAAA-MM-DD` | Público | Horarios libres de un día |
-| `POST /api/reservas` | Público | Solicitar una hora |
-| `GET /api/reservas/{token}` | Público (con el token) | Ver una solicitud |
-| `POST /api/reservas/{token}/cancelar` | Público (con el token) | Cancelar |
-| `/api/admin/**` | Administrador | Login, panel de reservas, disponibilidad y bloqueos |
-
 | Una disponibilidad semanal que se superpone con otra del mismo día se rechaza | Mantiene los datos limpios; dos tramos que solo se tocan sí son válidos | Aceptarlas y que la calculadora elimine los duplicados |
 | Un bloqueo no puede pisar una reserva confirmada: se rechaza e indica cuáles chocan | No quedan citas confirmadas en un horario bloqueado | Permitirlo y dejar citas "huérfanas" |
 | Eliminar un tramo semanal no toca las reservas ya confirmadas | El tramo solo define qué se ofrece hacia adelante; para anular un día existe el bloqueo | Cancelar en cascada las reservas del tramo |
+| Frontend en HTML, CSS y JavaScript sin framework, servido por Spring Boot | Mismo origen que la API: la cookie y el token CSRF funcionan sin CORS, y no hay herramientas de build | React o Vue con Vite en una app aparte |
+| Los textos del usuario se insertan con `textContent`, nunca con `innerHTML`, y una política CSP bloquea scripts y estilos de otros orígenes | Doble defensa contra XSS: un nombre como `<script>` se muestra como texto, y aunque se colara algo, el navegador no lo ejecutaría | Confiar solo en validar los datos de entrada |
+| `GET /api/horarios/resumen` entrega los días con horas libres en una llamada | El navegador no hace una consulta por cada día | Preguntar día por día desde el frontend |
+| La página recuerda los enlaces de las solicitudes en el navegador (`localStorage`) | Un cliente recupera su enlace sin crear cuenta | Exigir una cuenta al cliente |

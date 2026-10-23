@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Endpoint PÚBLICO (solo lectura): los clientes consultan qué horas hay libres. */
+/** Endpoints PÚBLICOS (solo lectura): los clientes consultan qué horas hay libres. */
 @RestController
 @RequestMapping("/api/horarios")
 public class HorariosController {
@@ -34,5 +34,11 @@ public class HorariosController {
                 .toList();
 
         return new HorariosResponse(fecha.toString(), items);
+    }
+
+    // GET /api/horarios/resumen -> los días con al menos un horario libre (para pintar el selector de días)
+    @GetMapping("/resumen")
+    public ResumenHorariosResponse resumen() {
+        return ResumenHorariosResponse.desde(servicio.resumenDias());
     }
 }

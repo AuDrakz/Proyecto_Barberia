@@ -21,8 +21,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Seguridad de la aplicación:
- *  - Páginas y archivos del frontend (HTML, CSS, JS): públicos, solo lectura. No contienen datos: los datos
- *    llegan por la API, que es la que está protegida.
+ *  - Páginas y archivos del frontend (HTML, CSS, JS), incluida la del panel: públicos, solo lectura. No contienen
+ *    datos: los datos llegan por la API, que es la que está protegida (/admin.html sin sesión solo muestra el login).
  *  - API pública: horarios, datos del negocio y solicitudes/cancelaciones del cliente (el token del enlace es su llave).
  *  - API de administración (/api/admin/**): exige sesión iniciada (cookie) y rol ADMIN.
  *  - Todo lo demás: DENEGADO por defecto (lo que no se permite explícitamente, no se puede usar).
@@ -68,7 +68,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/error").permitAll()
                         // Frontend: solo lectura (GET) de las páginas y sus archivos
-                        .requestMatchers(HttpMethod.GET, "/", "/index.html", "/reserva.html",
+                        .requestMatchers(HttpMethod.GET, "/", "/index.html", "/reserva.html", "/admin.html",
                                 "/css/**", "/js/**", "/favicon.svg").permitAll()
                         // API pública
                         .requestMatchers(HttpMethod.GET, "/api/horarios", "/api/horarios/resumen", "/api/negocio").permitAll()

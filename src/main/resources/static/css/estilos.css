@@ -62,7 +62,11 @@ p { margin: 0 0 12px; }
   overflow-x: auto;
   padding-bottom: 6px;
   scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color: var(--borde) transparent;
 }
+.dias::-webkit-scrollbar { height: 6px; }
+.dias::-webkit-scrollbar-thumb { background: var(--borde); border-radius: 3px; }
 .dia {
   flex: 0 0 auto;
   min-width: 76px;
@@ -180,3 +184,74 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
 @media (prefers-reduced-motion: no-preference) {
   .dia, .hora, .boton, .boton-secundario, .boton-peligro { transition: background-color 0.15s, border-color 0.15s; }
 }
+
+/* ================= Panel del administrador ================= */
+.contenedor-ancho { max-width: 760px; }
+.encabezado-panel { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.encabezado-panel h1 { margin: 0; }
+.usuario { color: var(--texto-suave); font-size: 0.9rem; }
+
+.pestanas { display: flex; gap: 6px; overflow-x: auto; margin: 16px 0; padding-bottom: 4px; scrollbar-width: thin; }
+.pestana {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 8px 16px;
+  background: var(--superficie);
+  color: var(--texto);
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.pestana[aria-selected="true"] { background: var(--acento); border-color: var(--acento); color: var(--acento-texto); }
+.contador {
+  display: inline-block;
+  min-width: 22px;
+  margin-left: 6px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--error);
+  color: var(--fondo);
+  font-size: 0.8rem;
+  line-height: 22px;
+  text-align: center;
+}
+
+.aviso { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.grupo { margin-bottom: 20px; }
+.grupo-titulo { margin: 0 0 8px; font-size: 1rem; text-transform: capitalize; color: var(--acento); }
+.grupo-nota { margin: 0 0 8px; font-size: 0.9rem; color: var(--aviso); }
+
+.solicitud, .fila-panel {
+  background: var(--superficie-2);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+}
+.solicitud-nombre { margin: 0; font-weight: 700; font-size: 1.05rem; }
+.solicitud p { margin: 0 0 4px; }
+.solicitud a, .fila-panel a { color: var(--acento); }
+.fila-panel { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.fila-texto { flex: 1 1 200px; min-width: 0; overflow-wrap: anywhere; }
+
+.botones { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.boton-chico { width: auto; min-height: 44px; padding: 8px 14px; }
+
+.campo select, .campo textarea {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 12px;
+  background: var(--fondo);
+  color: var(--texto);
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  font: inherit;
+}
+.campo select[aria-invalid="true"] { border-color: var(--error); }
+.campos-en-fila { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.interruptor { display: flex; align-items: center; gap: 10px; min-height: 44px; margin-bottom: 14px; font-weight: 600; }
+.interruptor input { width: 22px; height: 22px; }
+.formulario-panel { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--borde); }
+.formulario-panel h3 { margin: 0 0 12px; font-size: 1rem; }

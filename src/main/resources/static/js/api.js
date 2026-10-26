@@ -11,15 +11,26 @@ export class ErrorApi extends Error {
 
 function mensajeGenerico(estado) {
   if (estado === 404) return "No encontramos lo que buscabas.";
+  if (estado === 401) return "Tu sesión no está iniciada o expiró.";
   if (estado >= 500) return "Tuvimos un problema de nuestro lado. Inténtalo de nuevo en unos minutos.";
   return "No pudimos completar la operación.";
 }
 
-async function pedir(ruta, { metodo = "GET", cuerpo } = {}) {
+/**
+ * Hace la llamada y devuelve el JSON (o null si la respuesta viene vacía, como un 200 sin cuerpo o un 204).
+ * opciones: { metodo, cuerpo (se envía como JSON), formulario (se envía como formulario), csrf (token CSRF) }
+ */
+export async function pedir(ruta, { metodo = "GET", cuerpo, formulario, csrf } = {}) {
   const opciones = { method: metodo, headers: { Accept: "application/json" } };
   if (cuerpo !== undefined) {
     opciones.headers["Content-Type"] = "application/json";
     opciones.body = JSON.stringify(cuerpo);
+  } else if (formulario !== undefined) {
+    opciones.headers["Content-Type"] = "application/x-www-form-urlencoded";
+    opciones.body = new URLSearchParams(formulario).toString();
+  }
+  if (csrf) {
+    opciones.headers["X-XSRF-TOKEN"] = csrf;
   }
 
   let respuesta;

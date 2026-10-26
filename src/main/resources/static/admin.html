@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Panel privado: que los buscadores no lo indexen -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>Panel</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/estilos.css">
+</head>
+<body>
+  <div class="contenedor contenedor-ancho">
+    <header>
+      <h1 id="nombre-negocio">Panel</h1>
+    </header>
+
+    <main>
+      <div id="mensaje" class="aviso" role="status" aria-live="polite" hidden></div>
+
+      <!-- ====== Inicio de sesión ====== -->
+      <section id="vista-login" class="tarjeta" hidden aria-labelledby="titulo-login">
+        <h2 id="titulo-login">Iniciar sesión</h2>
+        <form id="form-login" novalidate>
+          <div class="campo">
+            <label for="login-email">Correo</label>
+            <input id="login-email" name="email" type="email" autocomplete="username" required>
+          </div>
+          <div class="campo">
+            <label for="login-clave">Contraseña</label>
+            <input id="login-clave" name="password" type="password" autocomplete="current-password" required>
+          </div>
+          <button id="login-enviar" type="submit" class="boton">Entrar</button>
+        </form>
+      </section>
+
+      <!-- ====== Panel ====== -->
+      <div id="vista-app" hidden>
+        <div class="encabezado-panel">
+          <span id="usuario" class="usuario"></span>
+          <button id="cerrar-sesion" type="button" class="boton-secundario boton-chico">Cerrar sesión</button>
+        </div>
+
+        <div id="pestanas" class="pestanas" role="tablist" aria-label="Secciones del panel">
+          <button id="tab-pendientes" type="button" class="pestana" role="tab" aria-selected="true" aria-controls="panel-pendientes">Pendientes<span id="contador-pendientes" class="contador" hidden></span></button>
+          <button id="tab-agenda" type="button" class="pestana" role="tab" aria-selected="false" tabindex="-1" aria-controls="panel-agenda">Agenda</button>
+          <button id="tab-disponibilidad" type="button" class="pestana" role="tab" aria-selected="false" tabindex="-1" aria-controls="panel-disponibilidad">Horarios</button>
+          <button id="tab-bloqueos" type="button" class="pestana" role="tab" aria-selected="false" tabindex="-1" aria-controls="panel-bloqueos">Bloqueos</button>
+        </div>
+
+        <section id="panel-pendientes" class="tarjeta" role="tabpanel" aria-labelledby="tab-pendientes">
+          <h2>Solicitudes pendientes</h2>
+          <div id="lista-pendientes"></div>
+        </section>
+
+        <section id="panel-agenda" class="tarjeta" role="tabpanel" aria-labelledby="tab-agenda" hidden>
+          <h2>Agenda confirmada</h2>
+          <div id="lista-agenda"></div>
+        </section>
+
+        <section id="panel-disponibilidad" class="tarjeta" role="tabpanel" aria-labelledby="tab-disponibilidad" hidden>
+          <h2>Horarios de atención</h2>
+          <p class="suave">Estos horarios se repiten cada semana. Los clientes solo ven horas dentro de ellos.</p>
+          <div id="lista-disponibilidad"></div>
+
+          <form id="form-disponibilidad" class="formulario-panel" novalidate>
+            <h3>Agregar horario</h3>
+            <div class="campo">
+              <label for="disp-diaSemana">Día</label>
+              <select id="disp-diaSemana" name="diaSemana" aria-describedby="error-disp-diaSemana">
+                <option value="1">Lunes</option>
+                <option value="2">Martes</option>
+                <option value="3">Miércoles</option>
+                <option value="4">Jueves</option>
+                <option value="5">Viernes</option>
+                <option value="6">Sábado</option>
+                <option value="7">Domingo</option>
+              </select>
+              <span id="error-disp-diaSemana" class="error-campo" role="alert"></span>
+            </div>
+            <div class="campos-en-fila">
+              <div class="campo">
+                <label for="disp-horaInicio">Desde</label>
+                <input id="disp-horaInicio" name="horaInicio" type="time" value="19:00" required aria-describedby="error-disp-horaInicio">
+                <span id="error-disp-horaInicio" class="error-campo" role="alert"></span>
+              </div>
+              <div class="campo">
+                <label for="disp-horaFin">Hasta</label>
+                <input id="disp-horaFin" name="horaFin" type="time" value="22:00" required aria-describedby="error-disp-horaFin">
+                <span id="error-disp-horaFin" class="error-campo" role="alert"></span>
+              </div>
+            </div>
+            <button id="disp-enviar" type="submit" class="boton">Agregar horario</button>
+          </form>
+        </section>
+
+        <section id="panel-bloqueos" class="tarjeta" role="tabpanel" aria-labelledby="tab-bloqueos" hidden>
+          <h2>Bloqueos</h2>
+          <p class="suave">Días u horas puntuales en que no atiendes. No se puede bloquear un horario que ya tiene una reserva confirmada.</p>
+          <div id="lista-bloqueos"></div>
+
+          <form id="form-bloqueos" class="formulario-panel" novalidate>
+            <h3>Agregar bloqueo</h3>
+            <div class="campo">
+              <label for="blo-fecha">Fecha</label>
+              <input id="blo-fecha" name="fecha" type="date" required aria-describedby="error-blo-fecha">
+              <span id="error-blo-fecha" class="error-campo" role="alert"></span>
+            </div>
+            <label class="interruptor"><input id="blo-todo" type="checkbox" checked> Todo el día</label>
+            <div id="blo-horas" class="campos-en-fila" hidden>
+              <div class="campo">
+                <label for="blo-horaInicio">Desde</label>
+                <input id="blo-horaInicio" name="horaInicio" type="time" aria-describedby="error-blo-horaInicio">
+                <span id="error-blo-horaInicio" class="error-campo" role="alert"></span>
+              </div>
+              <div class="campo">
+                <label for="blo-horaFin">Hasta</label>
+                <input id="blo-horaFin" name="horaFin" type="time" aria-describedby="error-blo-horaFin">
+                <span id="error-blo-horaFin" class="error-campo" role="alert"></span>
+              </div>
+            </div>
+            <div class="campo">
+              <label for="blo-motivo">Motivo (opcional)</label>
+              <input id="blo-motivo" name="motivo" type="text" maxlength="200" aria-describedby="error-blo-motivo">
+              <span id="error-blo-motivo" class="error-campo" role="alert"></span>
+            </div>
+            <button id="blo-enviar" type="submit" class="boton">Agregar bloqueo</button>
+          </form>
+        </section>
+      </div>
+    </main>
+  </div>
+  <script type="module" src="/js/admin/admin.js"></script>
+</body>
+</html>

@@ -77,3 +77,19 @@ export const ESTADOS = {
 export function infoEstado(estado) {
   return ESTADOS[estado] ?? { texto: estado, clase: "badge-neutro", explicacion: "" };
 }
+
+/** Nombres de los días de la semana, en el orden de la API: 1 = lunes ... 7 = domingo. */
+export const NOMBRES_DIA = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
+
+/** Enlace que abre WhatsApp con un chat y un texto ya escrito (el usuario decide si lo envía). */
+export function enlaceWhatsapp(telefono, texto) {
+  const digitos = String(telefono).replace(/\D/g, "");
+  return `https://wa.me/${digitos}?text=${encodeURIComponent(texto)}`;
+}
+
+/** La fecha de hoy del dispositivo, como AAAA-MM-DD (sirve para el atributo min de un campo de fecha). */
+export function hoyIso() {
+  const ahora = new Date();
+  const dos = (n) => String(n).padStart(2, "0");
+  return `${ahora.getFullYear()}-${dos(ahora.getMonth() + 1)}-${dos(ahora.getDate())}`;
+}

@@ -3,7 +3,7 @@
 Sistema de reserva de horas para una barbería casera. Los clientes solicitan una hora desde el celular
 y el barbero confirma o rechaza cada solicitud.
 
-> Estado: en desarrollo (etapa 1: base del proyecto).
+> Estado: producto funcional en local; falta dejarlo listo para publicar (etapa 6).
 
 ## Requisitos
 
@@ -12,16 +12,17 @@ y el barbero confirma o rechaza cada solicitud.
 
 ## Cómo ejecutarlo en local
 
-```bash
-   ## Cómo ejecutarlo en local
+Con Docker Desktop abierto, desde la carpeta del proyecto:
 
-   1. Levantar la base de datos: `docker compose up -d`
-   2. Definir las credenciales del administrador (se crea al primer arranque, solo si no existe ninguno):
 ```powershell
-      $env:ADMIN_EMAIL = "admin@ejemplo.com"
-      $env:ADMIN_PASSWORD = Read-Host "Contraseña (mínimo 12 caracteres)"
+powershell -ExecutionPolicy Bypass -File docs/dev/arrancar.ps1
 ```
-   3. Arrancar la aplicación: `./mvnw spring-boot:run`
+
+Levanta la base de datos y la aplicación. La primera vez te pide el correo y la contraseña del administrador
+(mínimo 12 caracteres). Luego abre:
+
+- Clientes: http://localhost:8080
+- Administrador: http://localhost:8080/admin.html
 
 ## Decisiones de diseño
 
@@ -42,7 +43,9 @@ Ver [docs/decisiones.md](docs/decisiones.md).
 - [x] Etapa 1: base del proyecto y esquema de la base de datos
 - [x] Etapa 2: disponibilidad, bloqueos y horarios libres
 - [x] Etapa 3: solicitud de hora y cancelación con enlace
-- [x] Etapa 4: panel del administrador (login, confirmar y rechazar)
-- [x] Etapa 5: frontend para celular
-- [ ] Etapa 6: CI, despliegue y documentación final
+- [x] Etapa 4: login del administrador y panel para confirmar, rechazar y cancelar
+- [x] Etapa 4b: disponibilidad y bloqueos desde la API
+- [x] Etapa 5a: páginas del cliente
+- [x] Etapa 5b: panel del administrador
+- [ ] Etapa 6: Docker, integración continua, seguridad de producción y despliegue
 - [ ] v2: reagendar

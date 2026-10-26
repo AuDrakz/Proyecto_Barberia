@@ -36,3 +36,7 @@ git checkout -b docs/cierre-etapa-2
 | Los textos del usuario se insertan con `textContent`, nunca con `innerHTML`, y una política CSP bloquea scripts y estilos de otros orígenes | Doble defensa contra XSS: un nombre como `<script>` se muestra como texto, y aunque se colara algo, el navegador no lo ejecutaría | Confiar solo en validar los datos de entrada |
 | `GET /api/horarios/resumen` entrega los días con horas libres en una llamada | El navegador no hace una consulta por cada día | Preguntar día por día desde el frontend |
 | La página recuerda los enlaces de las solicitudes en el navegador (`localStorage`) | Un cliente recupera su enlace sin crear cuenta | Exigir una cuenta al cliente |
+| Panel en una sola página con pestañas (`/admin.html`) | Se siente como una app en el celular y no recarga entre secciones | Una página por sección |
+| La página del panel es pública; los datos están protegidos por la API | Lo que protege es la sesión y el rol en el servidor, no esconder la página | Proteger el HTML con login |
+| Ante un 403 se renueva el token CSRF y se reintenta UNA vez | Tolera un token vencido sin caer en un bucle infinito | No reintentar, o reintentar sin límite |
+| Los avisos a clientes son enlaces de WhatsApp con el texto prellenado | El administrador ya usa WhatsApp; no se envía nada sin que él lo decida | Integrar la API de WhatsApp (costo y complejidad) |

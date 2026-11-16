@@ -28,6 +28,7 @@ Levanta la base de datos y la aplicación. La primera vez te pide el correo y la
 
 Ver [docs/decisiones.md](docs/decisiones.md).
 
+## API
 | Endpoint | Acceso | Qué hace |
 |---|---|---|
 | `GET /api/horarios?fecha=AAAA-MM-DD` | Público | Horarios libres de un día |

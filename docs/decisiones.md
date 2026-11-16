@@ -17,7 +17,6 @@ Registro corto de decisiones importantes: qué se eligió, por qué y qué se de
 | `Clock` inyectado en vez de `LocalDate.now()` directo | Las pruebas pueden fijar "hoy" en cualquier fecha | Depender del reloj real: pruebas que fallan según el día |
 | Paquetes por funcionalidad (`horario`, `reserva`) | Lo que cambia junto vive junto | Paquetes por capa (`controller`, `service`...): el código de una funcionalidad queda disperso |
 | Disponibilidad y bloqueos se cargan a mano por ahora | Crearlos requiere login: se hace en la etapa 4 junto con la seguridad | Dejar endpoints de escritura sin autenticación |
-git checkout -b docs/cierre-etapa-2
 | El servidor recalcula los horarios libres y exige que la hora pedida esté en la lista | Nunca se confía en lo que manda el navegador | Confiar en que la pantalla solo ofrece horas válidas |
 | Cancelar una solicitud pendiente la deja `CANCELADA` con `cancelada_por = CLIENTE` | No se agrega un estado más | Un estado nuevo (por ejemplo `RETIRADA`) |
 | Máximo de 2 solicitudes pendientes por teléfono, normalizado a formato E.164 | Defensa barata contra horas fantasma; el formato único evita saltarse el límite | Verificar el teléfono con código |
@@ -28,7 +27,7 @@ git checkout -b docs/cierre-etapa-2
 | Todo denegado por defecto; solo se abre lo permitido explícitamente | Un endpoint olvidado no queda expuesto | Permitir todo y proteger de a uno |
 | CSRF activado con `csrf.spa()`, salvo en los endpoints públicos del cliente | Las acciones del administrador usan cookie, y la cookie viaja sola | Desactivar CSRF |
 | Confirmar una solicitud rechaza las demás del mismo horario en la misma transacción | Todo o nada; el índice único de la base de datos es la red de seguridad final | Rechazarlas con un proceso aparte |
-## API
+
 | Una disponibilidad semanal que se superpone con otra del mismo día se rechaza | Mantiene los datos limpios; dos tramos que solo se tocan sí son válidos | Aceptarlas y que la calculadora elimine los duplicados |
 | Un bloqueo no puede pisar una reserva confirmada: se rechaza e indica cuáles chocan | No quedan citas confirmadas en un horario bloqueado | Permitirlo y dejar citas "huérfanas" |
 | Eliminar un tramo semanal no toca las reservas ya confirmadas | El tramo solo define qué se ofrece hacia adelante; para anular un día existe el bloqueo | Cancelar en cascada las reservas del tramo |

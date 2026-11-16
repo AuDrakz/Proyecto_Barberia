@@ -39,3 +39,4 @@ Registro corto de decisiones importantes: qué se eligió, por qué y qué se de
 | La página del panel es pública; los datos están protegidos por la API | Lo que protege es la sesión y el rol en el servidor, no esconder la página | Proteger el HTML con login |
 | Ante un 403 se renueva el token CSRF y se reintenta UNA vez | Tolera un token vencido sin caer en un bucle infinito | No reintentar, o reintentar sin límite |
 | Los avisos a clientes son enlaces de WhatsApp con el texto prellenado | El administrador ya usa WhatsApp; no se envía nada sin que él lo decida | Integrar la API de WhatsApp (costo y complejidad) |
+| El máximo de pendientes por teléfono solo cuenta solicitudes de horas futuras | Una solicitud sin respuesta cuya hora ya pasó quedaba invisible y bloqueaba al cliente para siempre | Contar todas las `SOLICITADA`, sin mirar la fecha |

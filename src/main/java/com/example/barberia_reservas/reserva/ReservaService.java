@@ -59,7 +59,8 @@ public class ReservaService {
                 solicitud.telefono(), solicitud.inicio(), EstadoReserva.SOLICITADA)) {
             throw new ConflictoDeNegocioException("Ya tienes una solicitud pendiente para ese horario.");
         }
-        long pendientes = reservaRepository.countByTelefonoAndEstado(solicitud.telefono(), EstadoReserva.SOLICITADA);
+        long pendientes = reservaRepository.countByTelefonoAndEstadoAndInicioAfter(
+                solicitud.telefono(), EstadoReserva.SOLICITADA, clock.instant());
         if (pendientes >= maxSolicitudesPendientes) {
             throw new ConflictoDeNegocioException("Ya tienes " + pendientes
                     + " solicitudes pendientes. Espera a que se respondan o cancela alguna.");

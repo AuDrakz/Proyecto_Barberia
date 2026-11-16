@@ -87,7 +87,7 @@ class ReservaServiceTest {
     @Test
     void rechazaCuandoElTelefonoYaTieneElMaximoDeSolicitudesPendientes() {
         haceFaltaQueLas19EstenLibres();
-        when(repositorio.countByTelefonoAndEstado(TELEFONO, EstadoReserva.SOLICITADA)).thenReturn(2L);
+        when(repositorio.countByTelefonoAndEstadoAndInicioAfter(TELEFONO, EstadoReserva.SOLICITADA, AHORA)).thenReturn(2L);
 
         assertThrows(ConflictoDeNegocioException.class,
                 () -> servicio.solicitar("Juan Pérez", "912345678", null, INICIO_TEXTO));
@@ -97,11 +97,23 @@ class ReservaServiceTest {
     @Test
     void permiteUnaSegundaSolicitudPendiente() {
         haceFaltaQueLas19EstenLibres();
-        when(repositorio.countByTelefonoAndEstado(TELEFONO, EstadoReserva.SOLICITADA)).thenReturn(1L);
+        when(repositorio.countByTelefonoAndEstadoAndInicioAfter(TELEFONO, EstadoReserva.SOLICITADA, AHORA)).thenReturn(1L);
 
         Reserva reserva = servicio.solicitar("Juan Pérez", "912345678", null, INICIO_TEXTO);
 
         assertEquals(EstadoReserva.SOLICITADA, reserva.getEstado());
+    }
+
+    @Test
+    void soloSeContabilizanLasSolicitudesPendientesQueAunNoVencen() {
+        haceFaltaQueLas19EstenLibres();
+        when(repositorio.countByTelefonoAndEstadoAndInicioAfter(TELEFONO, EstadoReserva.SOLICITADA, AHORA)).thenReturn(0L);
+
+        Reserva reserva = servicio.solicitar("Juan Pérez", "912345678", null, INICIO_TEXTO);
+
+        assertEquals(EstadoReserva.SOLICITADA, reserva.getEstado());
+        // El corte es "ahora": las solicitudes cuya hora ya pasó no entran en la cuenta.
+        verify(repositorio).countByTelefonoAndEstadoAndInicioAfter(TELEFONO, EstadoReserva.SOLICITADA, AHORA);
     }
 
     @Test

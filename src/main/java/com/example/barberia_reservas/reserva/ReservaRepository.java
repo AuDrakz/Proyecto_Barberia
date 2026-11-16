@@ -22,7 +22,7 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
                                 @Param("hasta") Instant hasta);
 
     /** Spring Data genera estas consultas a partir del nombre del método. */
-    long countByTelefonoAndEstado(String telefono, EstadoReserva estado);
+    long countByTelefonoAndEstadoAndInicioAfter(String telefono, EstadoReserva estado, Instant desde);
 
     boolean existsByTelefonoAndInicioAndEstado(String telefono, Instant inicio, EstadoReserva estado);
 

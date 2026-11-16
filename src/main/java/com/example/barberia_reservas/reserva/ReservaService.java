@@ -4,6 +4,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.Duration;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class ReservaService {
     private final Clock clock;
     private final ZoneId zona;
     private final int maxSolicitudesPendientes;
+    private final int horasMinimasCancelacion;
     private final ValidadorSolicitud validador = new ValidadorSolicitud();
 
     public ReservaService(ReservaRepository reservaRepository,
@@ -37,6 +39,7 @@ public class ReservaService {
         this.clock = clock;
         this.zona = ZoneId.of(propiedades.zonaHoraria());
         this.maxSolicitudesPendientes = propiedades.maxSolicitudesPendientesPorTelefono();
+        this.horasMinimasCancelacion = propiedades.horasMinimasCancelacion();
     }
 
     @Transactional
@@ -83,6 +86,13 @@ public class ReservaService {
         Instant ahora = clock.instant();
         if (!reserva.getInicio().isAfter(ahora)) {
             throw new ConflictoDeNegocioException("No se puede cancelar una hora que ya pasó.");
+        }
+        // Una hora CONFIRMADA es un compromiso del barbero: el cliente solo puede cancelarla con anticipación
+        // suficiente. Una solicitud pendiente (aún sin confirmar) se puede retirar en cualquier momento.
+        Instant limite = reserva.getInicio().minus(Duration.ofHours(horasMinimasCancelacion));
+        if (reserva.getEstado() == EstadoReserva.CONFIRMADA && ahora.isAfter(limite)) {
+            throw new ConflictoDeNegocioException("Esta hora ya está confirmada y solo se puede cancelar con al menos "
+                    + horasMinimasCancelacion + " horas de anticipación. Escríbele directamente al barbero.");
         }
         reserva.cancelar(CanceladaPor.CLIENTE, ahora);
         // No hace falta save(): la entidad está "gestionada" dentro de la transacción y JPA guarda el cambio al terminar.

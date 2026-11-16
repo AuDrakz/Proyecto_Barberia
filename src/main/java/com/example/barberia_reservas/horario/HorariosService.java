@@ -54,33 +54,19 @@ public class HorariosService {
         // "Hoy" se calcula en la zona horaria del negocio, no en la del servidor.
         LocalDate hoy = LocalDate.now(clock.withZone(zona));
         regla.validar(fecha, hoy);
+        return horariosDelDia(fecha, true);
+    }
 
-        // Un bloqueo de día completo gana sobre todo lo demás: ahorra el resto de las consultas.
-        List<Bloqueo> bloqueos = bloqueoRepository.findByFecha(fecha);
-        if (bloqueos.stream().anyMatch(Bloqueo::esDiaCompleto)) {
-            return List.of();
-        }
-
-        // getDayOfWeek().getValue() es 1 = lunes ... 7 = domingo, igual que dia_semana en la base de datos.
-        short diaSemana = (short) fecha.getDayOfWeek().getValue();
-        List<RangoHorario> disponibles = disponibilidadRepository.findByDiaSemana(diaSemana).stream()
-                .map(d -> new RangoHorario(d.getHoraInicio(), d.getHoraFin()))
-                .toList();
-        if (disponibles.isEmpty()) {
-            return List.of();
-        }
-
-        List<RangoHorario> bloqueados = bloqueos.stream()
-                .map(b -> new RangoHorario(b.getHoraInicio(), b.getHoraFin()))
-                .toList();
-
-        // Rango del día en la zona del negocio, convertido a instantes: [00:00 de hoy, 00:00 de mañana)
-        Instant desde = fecha.atStartOfDay(zona).toInstant();
-        Instant hasta = fecha.plusDays(1).atStartOfDay(zona).toInstant();
-        Set<Instant> ocupados = new HashSet<>(
-                reservaRepository.buscarInicios(EstadoReserva.CONFIRMADA, desde, hasta));
-
-        return calculadora.calcular(fecha, disponibles, bloqueados, ocupados);
+    /**
+     * ¿Esa hora sigue siendo parte de lo que el barbero atiende? Es decir: cae en un tramo de su disponibilidad
+     * semanal y no está bloqueada. A propósito IGNORA la regla de anticipación y las reservas ya confirmadas:
+     * la usa el administrador al confirmar, y esas dos cosas se comprueban por otro lado.
+     */
+    @Transactional(readOnly = true)
+    public boolean estaEnLaAgenda(Instant inicio) {
+        LocalDate fecha = inicio.atZone(zona).toLocalDate();
+        return horariosDelDia(fecha, false).stream()
+                .anyMatch(horario -> horario.inicio().toInstant().equals(inicio));
     }
 
     /**
@@ -101,5 +87,37 @@ public class HorariosService {
             }
         }
         return dias;
+    }
+
+    /** Disponibilidad - bloqueos (- reservas confirmadas, si se pide) de UN día. Sin validar la anticipación. */
+    private List<Horario> horariosDelDia(LocalDate fecha, boolean descontarReservas) {
+        // Un bloqueo de día completo gana sobre todo lo demás: ahorra el resto de las consultas.
+        List<Bloqueo> bloqueos = bloqueoRepository.findByFecha(fecha);
+        if (bloqueos.stream().anyMatch(Bloqueo::esDiaCompleto)) {
+            return List.of();
+        }
+
+        // getDayOfWeek().getValue() es 1 = lunes ... 7 = domingo, igual que dia_semana en la base de datos.
+        short diaSemana = (short) fecha.getDayOfWeek().getValue();
+        List<RangoHorario> disponibles = disponibilidadRepository.findByDiaSemana(diaSemana).stream()
+                .map(d -> new RangoHorario(d.getHoraInicio(), d.getHoraFin()))
+                .toList();
+        if (disponibles.isEmpty()) {
+            return List.of();
+        }
+
+        List<RangoHorario> bloqueados = bloqueos.stream()
+                .map(b -> new RangoHorario(b.getHoraInicio(), b.getHoraFin()))
+                .toList();
+
+        Set<Instant> ocupados = descontarReservas ? iniciosConfirmados(fecha) : Set.of();
+        return calculadora.calcular(fecha, disponibles, bloqueados, ocupados);
+    }
+
+    private Set<Instant> iniciosConfirmados(LocalDate fecha) {
+        // Rango del día en la zona del negocio, convertido a instantes: [00:00 de hoy, 00:00 de mañana)
+        Instant desde = fecha.atStartOfDay(zona).toInstant();
+        Instant hasta = fecha.plusDays(1).atStartOfDay(zona).toInstant();
+        return new HashSet<>(reservaRepository.buscarInicios(EstadoReserva.CONFIRMADA, desde, hasta));
     }
 }

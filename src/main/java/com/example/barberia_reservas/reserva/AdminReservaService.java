@@ -10,16 +10,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.barberia_reservas.common.ConflictoDeNegocioException;
 import com.example.barberia_reservas.common.ReservaNoEncontradaException;
+import com.example.barberia_reservas.horario.HorariosService;
 
 /** Casos de uso del ADMINISTRADOR: ver solicitudes, confirmar, rechazar y cancelar. */
 @Service
 public class AdminReservaService {
 
     private final ReservaRepository reservaRepository;
+    private final HorariosService horariosService;
     private final Clock clock;
 
-    public AdminReservaService(ReservaRepository reservaRepository, Clock clock) {
+    public AdminReservaService(ReservaRepository reservaRepository, HorariosService horariosService, Clock clock) {
         this.reservaRepository = reservaRepository;
+        this.horariosService = horariosService;
         this.clock = clock;
     }
 
@@ -43,6 +46,11 @@ public class AdminReservaService {
         if (!reserva.getInicio().isAfter(ahora)) {
             throw new ConflictoDeNegocioException("No se puede confirmar una hora que ya pasó.");
         }
+        if (!horariosService.estaEnLaAgenda(reserva.getInicio())) {
+            throw new ConflictoDeNegocioException("Ese horario ya no está en la agenda (hay un bloqueo o cambió la "
+                    + "disponibilidad). Rechaza la solicitud o elimina el bloqueo antes de confirmar.");
+        }
+
         if (reservaRepository.existsByInicioAndEstado(reserva.getInicio(), EstadoReserva.CONFIRMADA)) {
             throw new ConflictoDeNegocioException("Ese horario ya tiene una reserva confirmada.");
         }

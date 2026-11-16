@@ -15,10 +15,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import com.example.barberia_reservas.common.ConflictoDeNegocioException;
 import com.example.barberia_reservas.common.ReservaNoEncontradaException;
+import com.example.barberia_reservas.horario.HorariosService;
 
 /** Reglas del panel del administrador, con el repositorio simulado (sin base de datos ni Spring). */
 class AdminReservaServiceTest {
@@ -27,8 +29,15 @@ class AdminReservaServiceTest {
     private static final Instant INICIO = Instant.parse("2026-10-20T22:00:00Z");
 
     private final ReservaRepository repositorio = mock(ReservaRepository.class);
+    private final HorariosService horarios = mock(HorariosService.class);
     private final AdminReservaService servicio =
-            new AdminReservaService(repositorio, Clock.fixed(AHORA, ZoneOffset.UTC));
+            new AdminReservaService(repositorio, horarios, Clock.fixed(AHORA, ZoneOffset.UTC));
+
+    @BeforeEach
+    void laAgendaOfreceCualquierHorario() {
+        // Salvo que una prueba diga lo contrario, la hora sigue dentro de la agenda.
+        when(horarios.estaEnLaAgenda(any(Instant.class))).thenReturn(true);
+    }
 
     private static Reserva solicitud(Instant inicio) {
         return Reserva.solicitar("Juan Pérez", "+56912345678", null, inicio, AHORA.minusSeconds(60));
@@ -122,5 +131,16 @@ class AdminReservaServiceTest {
                 .thenReturn(List.of(reserva));
 
         assertEquals(List.of(reserva), servicio.listar(EstadoReserva.SOLICITADA));
+    }
+
+    @Test
+    void noConfirmaUnHorarioQueQuedoFueraDeLaAgenda() {
+        Reserva reserva = solicitud(INICIO);
+        when(repositorio.findById(1L)).thenReturn(Optional.of(reserva));
+        when(horarios.estaEnLaAgenda(INICIO)).thenReturn(false);
+
+        assertThrows(ConflictoDeNegocioException.class, () -> servicio.confirmar(1L));
+        assertEquals(EstadoReserva.SOLICITADA, reserva.getEstado());
+        verify(repositorio, never()).saveAndFlush(any(Reserva.class));
     }
 }

@@ -45,7 +45,7 @@ class ReservaServiceTest {
     private final ReservaService servicio = new ReservaService(
             repositorio,
             horarios,
-            new ReservasProperties("America/Santiago", 60, 1, 30, 2),
+            new ReservasProperties("America/Santiago", 60, 1, 30, 2, 2),
             Clock.fixed(AHORA, ZoneOffset.UTC));
 
     private void haceFaltaQueLas19EstenLibres() {
@@ -151,5 +151,44 @@ class ReservaServiceTest {
         servicio.cancelarPorCliente(reserva.getTokenCancelacion());
 
         assertThrows(ConflictoDeNegocioException.class, () -> servicio.cancelarPorCliente(reserva.getTokenCancelacion()));
+    }
+
+    @Test
+    void elClienteNoPuedeCancelarUnaHoraConfirmadaQueEstaMuyCerca() {
+        Reserva reserva = Reserva.solicitar("Juan Pérez", TELEFONO, null, AHORA.plusSeconds(3600), AHORA.minusSeconds(7200));
+        reserva.confirmar(AHORA);
+        when(repositorio.findByTokenCancelacion(reserva.getTokenCancelacion())).thenReturn(Optional.of(reserva));
+
+        assertThrows(ConflictoDeNegocioException.class, () -> servicio.cancelarPorCliente(reserva.getTokenCancelacion()));
+        assertEquals(EstadoReserva.CONFIRMADA, reserva.getEstado());
+    }
+
+    @Test
+    void elClientePuedeCancelarUnaHoraConfirmadaConAnticipacionSuficiente() {
+        Reserva reserva = Reserva.solicitar("Juan Pérez", TELEFONO, null, INICIO, AHORA);
+        reserva.confirmar(AHORA);
+        when(repositorio.findByTokenCancelacion(reserva.getTokenCancelacion())).thenReturn(Optional.of(reserva));
+
+        Reserva cancelada = servicio.cancelarPorCliente(reserva.getTokenCancelacion());
+
+        assertEquals(EstadoReserva.CANCELADA, cancelada.getEstado());
+        assertEquals(CanceladaPor.CLIENTE, cancelada.getCanceladaPor());
+    }
+
+    @Test
+    void justoEnElLimiteDeAnticipacionSeAunPuedeCancelar() {
+        Reserva reserva = Reserva.solicitar("Juan Pérez", TELEFONO, null, AHORA.plusSeconds(2 * 3600), AHORA.minusSeconds(7200));
+        reserva.confirmar(AHORA);
+        when(repositorio.findByTokenCancelacion(reserva.getTokenCancelacion())).thenReturn(Optional.of(reserva));
+
+        assertEquals(EstadoReserva.CANCELADA, servicio.cancelarPorCliente(reserva.getTokenCancelacion()).getEstado());
+    }
+
+    @Test
+    void elClienteSiempreSePuedeRetirarDeUnaSolicitudPendienteAunqueFalteMuyPoco() {
+        Reserva reserva = Reserva.solicitar("Juan Pérez", TELEFONO, null, AHORA.plusSeconds(3600), AHORA.minusSeconds(7200));
+        when(repositorio.findByTokenCancelacion(reserva.getTokenCancelacion())).thenReturn(Optional.of(reserva));
+
+        assertEquals(EstadoReserva.CANCELADA, servicio.cancelarPorCliente(reserva.getTokenCancelacion()).getEstado());
     }
 }

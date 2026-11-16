@@ -14,7 +14,8 @@ public record ReservasProperties(
         int duracionMinutos,
         int diasMinimosAnticipacion,
         int diasMaximosAnticipacion,
-        int maxSolicitudesPendientesPorTelefono) {
+        int maxSolicitudesPendientesPorTelefono,
+        int horasMinimasCancelacion) {
 
     // Se valida al arrancar: si la configuración está mal, la app NO parte (falla rápido y con mensaje claro).
     public ReservasProperties {
@@ -30,6 +31,9 @@ public record ReservasProperties(
         }
         if (maxSolicitudesPendientesPorTelefono < 1) {
             throw new IllegalArgumentException("app.reservas.max-solicitudes-pendientes-por-telefono debe ser al menos 1");
+        }
+        if (horasMinimasCancelacion < 0) {
+            throw new IllegalArgumentException("app.reservas.horas-minimas-cancelacion no puede ser negativa");
         }
     }
 }

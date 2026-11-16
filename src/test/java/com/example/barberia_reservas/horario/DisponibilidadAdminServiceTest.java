@@ -23,7 +23,7 @@ class DisponibilidadAdminServiceTest {
 
     private final DisponibilidadRepository repositorio = mock(DisponibilidadRepository.class);
     private final DisponibilidadAdminService servicio = new DisponibilidadAdminService(
-            repositorio, new ReservasProperties("America/Santiago", 60, 1, 30, 2));
+            repositorio, new ReservasProperties("America/Santiago", 60, 1, 30, 2, 2));
 
     private static Disponibilidad tramo(int dia, int horaIni, int horaFin) {
         return Disponibilidad.crear((short) dia, LocalTime.of(horaIni, 0), LocalTime.of(horaFin, 0));

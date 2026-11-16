@@ -33,7 +33,7 @@ class HorariosServiceAgendaTest {
     private final ReservaRepository reservas = mock(ReservaRepository.class);
     private final HorariosService servicio = new HorariosService(
             disponibilidades, bloqueos, reservas,
-            new ReservasProperties("America/Santiago", 60, 1, 30, 2),
+            new ReservasProperties("America/Santiago", 60, 1, 30, 2, 2),
             Clock.fixed(Instant.parse("2026-10-13T12:00:00Z"), ZoneOffset.UTC));
 
     private void atiendeLosMartesDe19a22() {

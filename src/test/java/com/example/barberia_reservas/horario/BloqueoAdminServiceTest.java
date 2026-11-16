@@ -39,7 +39,7 @@ class BloqueoAdminServiceTest {
     private final ReservaRepository reservas = mock(ReservaRepository.class);
     private final BloqueoAdminService servicio = new BloqueoAdminService(
             bloqueos, reservas,
-            new ReservasProperties("America/Santiago", 60, 1, 30, 2),
+            new ReservasProperties("America/Santiago", 60, 1, 30, 2, 2),
             Clock.fixed(AHORA, ZoneOffset.UTC));
 
     /** Una reserva el DIA a la hora local dada (por ejemplo 20 = 20:00 hora de Santiago). */
